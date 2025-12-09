@@ -826,7 +826,7 @@
 
         async function initMediaPipe() {
             if (isCameraRunning) return;
-            camBtn.innerText = "Initializing...";
+            if (camBtn) camBtn.innerText = "Initializing...";
             debugInfo.innerText = "Loading AI models...";
             video = document.getElementById('webcam');
             try {
@@ -841,8 +841,10 @@
                 video.addEventListener("loadeddata", predictWebcam);
                 document.getElementById('webcam-wrapper').style.opacity = 1;
                 debugInfo.innerText = "Gesture Active: Show Hand";
-                camBtn.innerText = "Gesture Active";
-                camBtn.classList.add('active');
+                if (camBtn) {
+                    camBtn.innerText = "Gesture Active";
+                    camBtn.classList.add('active');
+                }
                 isCameraRunning = true;
             } catch(e) {
                 console.warn("Camera error:", e);
@@ -850,7 +852,7 @@
                 if (e.name === 'NotAllowedError' || e.name === 'PermissionDeniedError') msg = "Please allow camera access!";
                 else if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost') msg = "HTTPS required for camera!";
                 debugInfo.innerText = msg; showMsg(msg);
-                camBtn.innerText = "Retry Camera";
+                if (camBtn) camBtn.innerText = "Retry Camera";
             }
         }
 // <!--
@@ -906,9 +908,14 @@
                 renderer.setSize(window.innerWidth, window.innerHeight);
                 composer.setSize(window.innerWidth, window.innerHeight);
             });
-            document.getElementById('file-input').addEventListener('change', handleImageUpload);
-            document.getElementById('folder-input').addEventListener('change', handleImageUpload);
-            camBtn.addEventListener('click', () => { initMediaPipe(); });
+            const fileInput = document.getElementById('file-input');
+            if (fileInput) fileInput.addEventListener('change', handleImageUpload);
+
+            const folderInput = document.getElementById('folder-input');
+            if (folderInput) folderInput.addEventListener('change', handleImageUpload);
+
+            if (camBtn) camBtn.addEventListener('click', () => { initMediaPipe(); });
+
             window.addEventListener('keydown', (e) => {
                 const key = e.key.toLowerCase();
                 if (key === 'h') {

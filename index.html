@@ -220,7 +220,7 @@
             camera: { z: 50 },
 
             preload: {
-                autoScanLocal: true,
+                autoScanLocal: false,
                 scanCount: 200,
                 images: [
                     'https://images.unsplash.com/photo-1543589077-47d81606c1bf?q=80&w=600',
@@ -686,13 +686,14 @@
             };
 
             const vision = await FilesetResolver.forVisionTasks(
-                "./wasm"
+                "./models"
             );
             handLandmarker = await HandLandmarker.createFromOptions(vision, {
                 baseOptions: {
-                    modelAssetPath: `./model/hand_landmarker.task`,
+                    modelAssetPath: `./models/hand_landmarker.task`,
                     delegate: "GPU"
                 },
+
                 runningMode: "VIDEO",
                 numHands: 1
             });
@@ -789,7 +790,7 @@
             });
 
             document.getElementById('file-input').addEventListener('change', handleImageUpload);
-            document.getElementById('folder-input').addEventListener('change', handleImageUpload);
+            // document.getElementById('folder-input').addEventListener('change', handleImageUpload);
 
             window.addEventListener('keydown', (e) => {
                 if (e.key.toLowerCase() === 'h') {

@@ -146,7 +146,7 @@
         /* Webcam feedback */
         #webcam-wrapper {
             position: absolute; bottom: 100px; left: 20px;
-            width: 120px; height: 90px;
+            width: 400px; height: 350px;
             border: 1px solid rgba(212, 175, 55, 0.5);
             box-shadow: 0 0 20px rgba(0,0,0,0.9);
             border-radius: 4px; overflow: hidden;
@@ -289,30 +289,30 @@
     <div id="canvas-container"></div>
 
     <div id="ui-layer">
-        <h1>SISI Merry Christmas</h1>
+        <h1>2025圣诞快乐</h1>
 
         <div class="controls-wrapper">
             <div class="btn-group">
                 <div class="control-btn" id="cam-btn">📷 开启手势控制</div>
-<!--                <label class="control-btn">
-                    Select Folder
+                <label class="control-btn">
+                    上传文件夹
                     <input type="file" id="folder-input" webkitdirectory directory multiple>
-                </label>-->
+                </label>
                 <label class="control-btn">
                     上传图片
                     <input type="file" id="file-input" multiple accept="image/*">
                 </label>
             </div>
             <!-- 【修改】添加了 Press 'S' for Stats 的提示 -->
-            <div class="hint-text">Touch: Drag | Click Photo | Press 'S' for Stats</div>
+<!--            <div class="hint-text">Touch: Drag | Click Photo | Press 'S' for Stats</div>-->
         </div>
 
         <!-- 触屏模式切换按钮 -->
-        <div id="mode-bar">
-            <div class="mode-btn" onclick="setMode('TREE')" title="Tree Mode">🎄</div>
-            <div class="mode-btn" onclick="setMode('SCATTER')" title="Scatter Mode">✨</div>
-            <div class="mode-btn" onclick="setMode('FOCUS_RANDOM')" title="Focus Mode">🔍</div>
-        </div>
+<!--        <div id="mode-bar">-->
+<!--            <div class="mode-btn" onclick="setMode('TREE')" title="Tree Mode">🎄</div>-->
+<!--            <div class="mode-btn" onclick="setMode('SCATTER')" title="Scatter Mode">✨</div>-->
+<!--            <div class="mode-btn" onclick="setMode('FOCUS_RANDOM')" title="Focus Mode">🔍</div>-->
+<!--        </div>-->
 
         <!-- 【美化版统计仪表盘】 -->
         <!-- 【修改】添加了 class="ui-hidden" 默认隐藏 -->
@@ -350,7 +350,7 @@
     <div id="webcam-wrapper">
         <video id="webcam" autoplay playsinline webkit-playsinline></video>
     </div>
-    <div id="debug-info">Drag to rotate • Tap photo to view</div>
+     <div id="debug-info"></div>
 
     <script type="module">
         import * as THREE from 'three';
@@ -826,8 +826,8 @@
 
         async function initMediaPipe() {
             if (isCameraRunning) return;
-            if (camBtn) camBtn.innerText = "Initializing...";
-            debugInfo.innerText = "Loading AI models...";
+            if (camBtn) camBtn.innerText = "初始化...";
+            if (debugInfo) debugInfo.innerText = "加载 AI 模型中，请稍等...";
             video = document.getElementById('webcam');
             try {
                 const vision = await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm");
@@ -840,9 +840,9 @@
                 video.srcObject = stream;
                 video.addEventListener("loadeddata", predictWebcam);
                 document.getElementById('webcam-wrapper').style.opacity = 1;
-                debugInfo.innerText = "Gesture Active: Show Hand";
+                if (debugInfo) debugInfo.innerText = "Gesture Active: Show Hand";
                 if (camBtn) {
-                    camBtn.innerText = "Gesture Active";
+                    camBtn.innerText = "手势激活中";
                     camBtn.classList.add('active');
                 }
                 isCameraRunning = true;
@@ -851,7 +851,7 @@
                 let msg = "Camera Error: " + e.name;
                 if (e.name === 'NotAllowedError' || e.name === 'PermissionDeniedError') msg = "Please allow camera access!";
                 else if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost') msg = "HTTPS required for camera!";
-                debugInfo.innerText = msg; showMsg(msg);
+                if (debugInfo) debugInfo.innerText = msg; showMsg(msg);
                 if (camBtn) camBtn.innerText = "Retry Camera";
             }
         }
@@ -887,7 +887,7 @@
                 let avgTipDist = 0; tips.forEach(t => avgTipDist += Math.hypot(t.x - wrist.x, t.y - wrist.y)); avgTipDist /= 4;
                 const pinchDist = Math.hypot(lm[4].x - lm[8].x, lm[4].y - lm[8].y);
                 const extensionRatio = avgTipDist / handSize; const pinchRatio = pinchDist / handSize;
-                debugInfo.innerText = `Gesture Detected: ${STATE.mode}`;
+                if (debugInfo) debugInfo.innerText = `Gesture Detected: ${STATE.mode}`;
                 if (extensionRatio < 1.5) { STATE.mode = 'TREE'; STATE.focusTarget = null; }
                 else if (pinchRatio < 0.35) {
                     if (STATE.mode !== 'FOCUS') {
